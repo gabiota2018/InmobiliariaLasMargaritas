@@ -1,0 +1,62 @@
+﻿@model Inmobiliaria_.Net_Core.Models.Inquilino
+</br></br>
+<h2 style="color:white">@ViewData["Title"]</h2>
+<div class="row">
+    <div class="col-md-4"> </div>
+    <div class="col-md-4" style="color:#ffcc00">
+
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="IdPropietario" value="@Model.IdInquilino" />
+            <table style="color:#ffcc00;font-weight:bold">
+                <tr height="50">
+                    <th> <label asp-for="Dni" class="control-label"></label></th>
+                    <th>
+                        <input asp-for="Dni" class="form-control" />
+                        <span asp-validation-for="Dni" class="text-danger"></span>
+                    </th>
+                </tr>
+                <tr height="50">
+                    <th> <label asp-for="Apellido" class="control-label"></label></th>
+                    <th>
+                        <input asp-for="Apellido" class="form-control" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </th>
+                </tr>
+                <tr height="50">
+                    <th><label asp-for="Nombre" class="control-label"></label></th>
+                    <th>
+                        <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </th>
+                </tr>
+                <tr height="50">
+                    <th><label asp-for="Direccion" class="control-label"></label></th>
+                    <th>
+                        <input asp-for="Direccion" class="form-control" placeholder="Direccion" />
+                        <span asp-validation-for="Direccion" class="text-danger"></span>
+                    </th>
+                </tr>
+                <tr height="50">
+                    <th><label asp-for="Telefono" class="control-label"></label></th>
+                    <th>
+                        <input asp-for="Telefono" class="form-control" placeholder="Teléfono" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </th>
+                <tr height="50">
+                    <th colspan="2">
+                        &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        <input type="submit" value="Guardar" style="font-weight:bold; border:groove" class="btn btn-warning" />
+                    </th>
+
+                </tr>
+            </table>
+         </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

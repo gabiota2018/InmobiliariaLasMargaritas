@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
+    <title>@ViewBag.Title</title>
+</head>
+<body onload="init()" background="../imagenes/margarita.jpg" style="background-size: cover; background-repeat: no-repeat;  background-attachment: fixed;background-color:rgb(54,87,106)">
+    <header>
+        <nav class="site-header sticky-top py-1">
+            <div class="container d-flex flex-column flex-md-row justify-content-between">
+
+                @if (User.IsInRole("Administrador"))
+                {
+                    <a class="py-2" asp-controller="Home" asp-action="Index"> Inmobiliaria   "Las Margaritas"</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Propietarios" asp-action="Index"><span class="lnr lnr-user"></span> Propietarios</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Inquilino" asp-action="Index"><span class="lnr lnr-users"></span> Inquilinos</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Inmueble" asp-action="Index"><span class="lnr lnr-apartment"></span> Inmuebles</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Alquiler" asp-action="Index"><span class="lnr lnr-layers"></span>Alquileres</a>
+                }
+                @if (User.IsInRole("Propietario"))
+                {
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Propietarios" asp-action="Perfil"><span class="lnr lnr-user"></span> Mis Datos</a>
+                }
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle text-light" href="#" role="button" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent" data-display="static">
+                            <span class="lnr lnr-user"></span> @User.Identity.Name
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item text-dark" asp-controller="Propietario" asp-action="Edit"><i class="lnr lnr-user"></i> Perfil</a>
+                            <a class="dropdown-item text-dark" asp-controller="Home" asp-action="Logout"><i class="lnr lnr-exit"></i> Salir</a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+            <p style="color:white; font-family:'Cambria Math'; font-size:x-large"> &nbsp &nbsp &nbsp Inmobiliaria   "Las Margaritas"</p>
+                    <a class="py-2"><span class="lnr lnr-home" asp-controller="Home" asp-action="Login"></span> Inicio</a>
+                }
+            </div>
+        </nav>
+    </header>
+   
+    <main role="main">
+        <div class="container mt-3">
+
+            @if (ViewBag.Id != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Datos almacenados correctamente</strong> 
+                    @*Alta exitosa, el nuevo código es: @ViewBag.Id*@
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
+                    </button>
+                </div>
+            }
+            else if (ViewBag.Mensaje != null)
+            {
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>Información:</strong> @ViewBag.Mensaje
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
+                    </button>
+                </div>
+            }
+            else if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>¡Ups!</strong> @ViewBag.Error
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
+                    </button>
+                </div>
+            }
+            else if (!String.IsNullOrWhiteSpace(ViewBag.Error))
+            {
+                <environment names="Development">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>¡Ups!</strong> Ocurrió: @ViewBag.Error
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
+                        </button>
+                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false"><span class="lnr lnr-plus-circle"></span></a>
+                        <div class="collapse multi-collapse" id="multiCollapseExample1">
+                            @ViewBag.StackTrace
+                        </div>
+                    </div>
+                </environment>
+            }
+            <div class="m-1 p-1">
+                @RenderBody()
+            </div>
+         </div>
+    </main>
+
+    @RenderSection("Scripts", false)
+    @await Html.PartialAsync("_ScriptsPartial")
+    <script type="text/javascript">
+        function init() {
+            $('.alert').alert();
+        }
+    </script>
+</body>
+</html>

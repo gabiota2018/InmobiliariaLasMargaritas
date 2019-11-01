@@ -1,0 +1,95 @@
+﻿@model Inmobiliaria_.Net_Core.Models.Propietario
+
+</br></br></br></br>
+    <div class="row">
+        <div class="col-md-2"> </div>
+        <div class="col-md-4">
+           <h4 style="color:white">@ViewData["Title"]</h4>
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" name="IdPropietario" value="@Model.IdPropietario" />
+                <tabla style="color:#ffcc00;font-weight:bold">
+                    <tr height="50">
+                        <td><label asp-for="Nombre" class="control-label"></label></td>
+                        <td>
+                            <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr height="50">
+                        <td><label asp-for="Apellido" class="control-label"></label></td>
+                        <td>
+                            <input asp-for="Apellido" class="form-control" placeholder="Apellido" />
+                            <span asp-validation-for="Apellido" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr height="50">
+                        <td><label asp-for="Dni" class="control-label"></label></td>
+                        <td>
+                            <input asp-for="Dni" class="form-control" placeholder="DNI" />
+                            <span asp-validation-for="Dni" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr height="50">
+                        <td><label asp-for="Telefono" class="control-label"></label></td>
+                        <td>
+                            <input asp-for="Telefono" class="form-control" placeholder="Teléfono" />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr height="50">
+                        <td><label asp-for="Mail" class="control-label"></label></td>
+                        <td>
+                            <input asp-for="Mail" class="form-control" placeholder="Teléfono" />
+                            <span asp-validation-for="Mail" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr height="50">
+                        <td></td>
+                        <td>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                            <input type="submit" value="Guardar" style="font-weight:bold; border:groove" class="btn btn-outline-warning" />
+                        </td>
+                    </tr>
+                </tabla>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <h4 style="color:white">Cambiar contraseña</h4>
+            <form asp-action="CambiarPass" asp-route-id="@Model.IdPropietario" name="CambiarPass">
+                <input type="hidden" name="IdPropietario" value="@Model.IdPropietario" />
+                <tabla style="color:#ffcc00;font-weight:bold">
+                    <tr height="50">
+                        <td><label class="control-label">Último Password</label></td>
+                        <td>
+                            <input type="password" name="ClaveVieja" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr height="50">
+                        <td><label class="control-label">Nuevo Password</label></td>
+                        <td>
+                            <input type="password" name="ClaveNueva" class="form-control" placeholder="Nuevo Password" />
+                        </td>
+                    </tr>
+                    <tr height="50">
+                        <td><label class="control-label">Repetir Nuevo Password</label></td>
+                        <td>
+                            <input type="password" name="ClaveRepeticion" class="form-control" placeholder="Repetir Nuevo Password" />
+                        </td>
+                    </tr>
+                    <tr height="50">
+                        <td></td>
+                        <td>
+                            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                            <input type="submit" value="Cambiar" style="font-weight:bold; border:groove" class="btn btn-outline-warning" />
+                        </td>
+                    </tr>
+                </tabla>
+            </form>
+        </div>
+        <div class="col-md-2"> </div>
+    </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
