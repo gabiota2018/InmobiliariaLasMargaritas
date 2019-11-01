@@ -12,11 +12,12 @@ namespace Inmobiliaria_.Net_Core.Controllers
     {
         private readonly IRepositorioInmueble repositorio;
         private readonly IRepositorioPropietario repoPropietario;
-
-        public InmuebleController(IRepositorioInmueble repositorio, IRepositorioPropietario repoPropietrio)
+        private readonly IRepositorioAlquiler repoAlquiler;
+        public InmuebleController(IRepositorioInmueble repositorio, IRepositorioPropietario repoPropietrio, IRepositorioAlquiler repoAlquiler)
         {
             this.repositorio = repositorio;
             this.repoPropietario = repoPropietrio;
+            this.repoAlquiler = repoAlquiler;
         }
         // GET: Inmueble
         public ActionResult Index()
@@ -132,5 +133,33 @@ namespace Inmobiliaria_.Net_Core.Controllers
                 return View(inmueble);
             }
         }
+        public ActionResult Disponibles()
+        {
+            var lista = repositorio.ObtenerDisponibles();
+            if (TempData.ContainsKey("Id"))
+                ViewBag.Id = TempData["Id"];
+            if (TempData.ContainsKey("Mensaje"))
+                ViewBag.Mensaje = TempData["Mensaje"];
+            ViewData["Title"] = "Inmuebles Disponibles";
+            return View(lista);
+        }
+        public ActionResult PorDuenio()
+        {
+            int id = Convert.ToInt32(TempData["IdPropietario"]);
+            var lista = repositorio.BuscarPorPropietario(id);
+            var propietario = repoPropietario.ObtenerPorId(id);
+            if (TempData.ContainsKey("Id"))
+                ViewBag.Id = TempData["Id"];
+            if (TempData.ContainsKey("Mensaje"))
+                ViewBag.Mensaje = TempData["Mensaje"];
+            ViewData["Title"] = "Listado de Inmuebles" ;
+            return View(lista);
+        }
+        public ActionResult VerContratos(int id)
+        {
+            TempData["IdInmueble"] = id;
+            return RedirectToAction("VerContratos", "Alquiler");
+        }
+        
     }
 }

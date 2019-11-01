@@ -19,7 +19,8 @@
                     <a class="py-2 d-none d-md-inline-block" asp-controller="Propietarios" asp-action="Index"><span class="lnr lnr-user"></span> Propietarios</a>
                     <a class="py-2 d-none d-md-inline-block" asp-controller="Inquilino" asp-action="Index"><span class="lnr lnr-users"></span> Inquilinos</a>
                     <a class="py-2 d-none d-md-inline-block" asp-controller="Inmueble" asp-action="Index"><span class="lnr lnr-apartment"></span> Inmuebles</a>
-                    <a class="py-2 d-none d-md-inline-block" asp-controller="Alquiler" asp-action="Index"><span class="lnr lnr-layers"></span>Alquileres</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Alquiler" asp-action="Index"><span class="lnr lnr-license"></span>Alquileres</a>
+                    <a class="py-2 d-none d-md-inline-block" asp-controller="Pago" asp-action="Index"><span class="lnr lnr-layers"></span>Pagos</a>
                 }
                 @if (User.IsInRole("Propietario"))
                 {
@@ -40,7 +41,7 @@
                 }
                 else
                 {
-            <p style="color:white; font-family:'Cambria Math'; font-size:x-large"> &nbsp &nbsp &nbsp Inmobiliaria   "Las Margaritas"</p>
+                    <p style="color:white; font-family:'Cambria Math'; font-size:x-large"> &nbsp &nbsp &nbsp Inmobiliaria   "Las Margaritas"</p>
                     <a class="py-2"><span class="lnr lnr-home" asp-controller="Home" asp-action="Login"></span> Inicio</a>
                 }
             </div>

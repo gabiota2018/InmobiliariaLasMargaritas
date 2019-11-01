@@ -8,8 +8,11 @@ namespace Inmobiliaria_.Net_Core.Models
   
      public interface IRepositorioAlquiler : IRepositorio<Alquiler>
     {
-        Alquiler ObtenerPorIdInquilino(int id);
+        IList<Alquiler> ObtenerPorIdInquilino(int id);
 
-        Alquiler ObtenerPorIdInmueble(int id);
+        IList<Alquiler> ObtenerPorIdInmueble(int id);
+
+        IList<Alquiler> ObtenerVigentes();
+       
     }
 }

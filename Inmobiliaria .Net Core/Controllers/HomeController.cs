@@ -119,6 +119,21 @@ namespace Inmobiliaria_.Net_Core.Controllers
             IEnumerable<Claim> claims = identity.Claims;
             return View(claims);
         }
-
+        public ActionResult ContratosVigentes()
+        {
+            return RedirectToAction("ContratosVigentes","Alquiler");
+        }
+        public ActionResult ContratosPorInmueble()
+        {
+            return RedirectToAction("ContratosPorInmueble", "Alquiler");
+        }
+        public ActionResult Disponibles()
+        {
+            return RedirectToAction("Disponibles", "Inmueble");
+        }
+        public ActionResult PorDuenio()
+        {
+            return RedirectToAction("Index", "Propietarios");
+        }
     }
 }

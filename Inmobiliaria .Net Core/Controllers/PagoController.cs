@@ -32,12 +32,7 @@ namespace Inmobiliaria_.Net_Core.Controllers
             TempData["IdAlquiler"] = TempData["IdAlquiler"];
             return View(lista);
         }
-        // GET: Pago/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
+        
         // GET: Pago/Create
         public ActionResult Create()
         {

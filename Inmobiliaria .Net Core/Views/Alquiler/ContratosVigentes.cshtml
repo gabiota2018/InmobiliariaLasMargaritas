@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Inmobiliaria_.Net_Core.Models.Alquiler>
+
+<div style="background-color:whitesmoke; margin-top:10%">
+    <h4>@ViewData["Title"]</h4>
+    <p>
+        <a asp-action="Create" style="font-weight:bold">Nuevo Contrato</a>
+    </p>
+    <table class="table" border="solid 1px grey">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.IdAlquiler)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Precio)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha_inicio)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha_fin)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.inquilino)
+                </th>
+                <th colspan="2">
+                    @Html.DisplayNameFor(model => model.inmueble)
+                </th>
+                <th colspan="3">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IdAlquiler)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha_inicio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha_fin)
+                    </td>
+                    <td>
+                       @(item.inquilino.Nombre + " " + item.inquilino.Apellido)
+                    </td>
+                    <td>
+                        @(item.inmueble.Direccion)
+                    </td>
+                    <td>
+                        @(item.inmueble.Tipo + "- " + item.inmueble.Uso)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Renovar", "Edit", new { id = item.IdAlquiler })
+                    </td>
+                    <td>
+                        @Html.ActionLink("Pagos", "VerPagos", new { id = item.IdAlquiler })
+                    </td>
+                    <td>
+                        @Html.ActionLink("Rescindir", "Delete", new { id = item.IdAlquiler })
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>

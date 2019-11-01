@@ -46,12 +46,10 @@
                     @Html.DisplayFor(modelItem => item.Fecha_fin)
                 </td>
                 <td>
-                    @*@Html.DisplayFor(modelItem => (item.inquilino.IdInquilino+"-"+item.inquilino.Nombre+" "+item.inquilino.Apellido))*@
-                    @(item.inquilino.Nombre + " " + item.inquilino.Apellido)
+                   @(item.inquilino.Nombre + " " + item.inquilino.Apellido)
                 </td>
                 <td>
-                    @*@Html.DisplayFor(modelItem => item.inmueble.Direccion)*@
-                    @(item.inmueble.Direccion)
+                     @(item.inmueble.Direccion)
                 </td>
                 <td>
                     @(item.inmueble.Tipo + "- " + item.inmueble.Uso)

@@ -30,7 +30,8 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.IdPropietario)
@@ -50,16 +51,16 @@
             <td style="font-weight:bold">
                 @Html.DisplayFor(modelItem => item.Mail)
             </td>
-            @*<td>
-            @Html.ActionLink("Editar", "Edit", new { id = item.IdPropietario }) |
-            @Html.ActionLink("Eliminar", "Eliminar", new { id = item.IdPropietario })
-        </td>*@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.IdPropietario" title="Editar"><span class="lnr lnr-pencil"></span></a>&nbsp;
                 <a asp-action="Eliminar" asp-route-id="@item.IdPropietario" title="Eliminar"><span class="lnr lnr-cross"></span></a>
             </td>
+            <td>
+                @Html.ActionLink("Ver Inmuebles", "PorDuenio", new { id = item.IdPropietario })
+            </td>
         </tr>
-}
-    </tbody>
-</table>
+       
+    }
+        </tbody>
+    </table>
     </div>

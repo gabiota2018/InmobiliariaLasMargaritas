@@ -20,7 +20,7 @@ namespace Inmobiliaria_.Net_Core.Controllers
         {
             this.repositorio = repositorio;
             this.config = config;
-        }
+         }
 
         // GET: Propietario
         public ActionResult Index()
@@ -190,7 +190,7 @@ namespace Inmobiliaria_.Net_Core.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Eliminar(int id, Propietario propietario)
         {
-            try
+           try
             {
                 repositorio.Baja(id);
                 TempData["Mensaje"] = "Los datos fueron eliminados";
@@ -203,5 +203,13 @@ namespace Inmobiliaria_.Net_Core.Controllers
                 return View(propietario);
             }
         }
+
+        public ActionResult PorDuenio(int id)
+        {
+            TempData["IdPropietario"] = id;
+            return RedirectToAction("PorDuenio", "Inmueble");
+        }
+
+        
     }
 }

@@ -38,10 +38,23 @@ namespace Inmobiliaria_.Net_Core.Models
 
         public int Baja(int id)
         {
-            throw new NotImplementedException();
+            int res = -1;
+            DateTime hoy = DateTime.Now;
+            String fecha = Convert.ToString(hoy);
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sql = $"UPDATE Alquiler SET Fecha_fin=fecha WHERE IdAlquiler = {id}";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    connection.Open();
+                    res = command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+            return res;
         }
-
-        public int Modificacion(Alquiler p)
+       public int Modificacion(Alquiler p)
         {
             throw new NotImplementedException();
         }
@@ -94,12 +107,54 @@ namespace Inmobiliaria_.Net_Core.Models
             return alquiler;
         }
 
-        public Alquiler ObtenerPorIdInmueble(int id)
+        public IList<Alquiler> ObtenerPorIdInmueble(int id)
         {
-            throw new NotImplementedException();
+            IList<Alquiler> res = new List<Alquiler>();
+            Alquiler a = null;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+              string sql = $"SELECT IdAlquiler, a.Precio, Fecha_inicio, Fecha_fin, p.IdInquilino,p.Nombre,p.Apellido,i.IdInmueble,i.Direccion,i.Tipo,i.Uso,i.Precio " +
+                    $" FROM Alquiler a INNER JOIN Inquilino p ON a.IdInquilino=p.IdInquilino INNER JOIN Inmueble i ON a.IdInmueble = i.IdInmueble WHERE i.IdInmueble=@id AND a.Borrado=0";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                    command.CommandType = CommandType.Text;
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        a = new Alquiler
+                        {
+                            IdAlquiler = reader.GetInt32(0),
+                            Precio = reader.GetDecimal(1),
+                            Fecha_inicio = reader.GetString(2),
+                            Fecha_fin = reader.GetString(3),
+                            IdInquilino = reader.GetInt32(4),
+                            inquilino = new Inquilino
+                            {
+                                IdInquilino = reader.GetInt32(4),
+                                Nombre = reader.GetString(5),
+                                Apellido = reader.GetString(6),
+                            },
+                            IdInmueble = reader.GetInt32(7),
+                            inmueble = new Inmueble
+                            {
+                                IdInmueble = reader.GetInt32(7),
+                                Direccion = reader.GetString(8),
+                                Tipo = reader.GetString(9),
+                                Uso = reader.GetString(10),
+                                Precio = reader.GetDecimal(11),
+                            }
+                        };
+                        res.Add(a);
+                    }
+                    connection.Close();
+                }
+            }
+            return res;
         }
 
-        public Alquiler ObtenerPorIdInquilino(int id)
+        public IList<Alquiler> ObtenerPorIdInquilino(int id)
         {
             throw new NotImplementedException();
         }
@@ -114,10 +169,7 @@ namespace Inmobiliaria_.Net_Core.Models
                      $" FROM Alquiler a INNER JOIN Inquilino p ON a.IdInquilino=p.IdInquilino INNER JOIN Inmueble i ON a.IdInmueble = i.IdInmueble" +
                     $" WHERE a.Borrado=0";
 
-                //string sql = $"SELECT IdAlquiler, a.Precio, Fecha_inicio, Fecha_fin, a.IdInquilino " +
-                //    $"FROM Alquiler a INNER JOIN Inquilino p ON a.IdInquilino = p.IdInquilino " +
-                //   $" WHERE a.Borrado=0";
-                using (SqlCommand command = new SqlCommand(sql, connection))
+               using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     command.CommandType = CommandType.Text;
                     connection.Open();
@@ -154,5 +206,65 @@ namespace Inmobiliaria_.Net_Core.Models
             }
             return res;
         }
+        public IList<Alquiler> ObtenerVigentes()
+        {
+            IList<Alquiler> res = new List<Alquiler>();
+            IList<Alquiler> rta = new List<Alquiler>();
+            Alquiler a = null;
+            DateTime hoy = DateTime.Now;
+            DateTime fecha = new DateTime();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sql = $"SELECT IdAlquiler, a.Precio, Fecha_inicio, Fecha_fin, p.IdInquilino,p.Nombre,p.Apellido,i.IdInmueble,i.Direccion,i.Tipo,i.Uso,i.Precio " +
+                     $" FROM Alquiler a INNER JOIN Inquilino p ON a.IdInquilino=p.IdInquilino INNER JOIN Inmueble i ON a.IdInmueble = i.IdInmueble" +
+                    $" WHERE  a.Borrado=0";
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        a = new Alquiler
+                        {
+                            IdAlquiler = reader.GetInt32(0),
+                            Precio = reader.GetDecimal(1),
+                            Fecha_inicio = reader.GetString(2),
+                            Fecha_fin = reader.GetString(3),
+                            IdInquilino = reader.GetInt32(4),
+                            inquilino = new Inquilino
+                            {
+                                IdInquilino = reader.GetInt32(4),
+                                Nombre = reader.GetString(5),
+                                Apellido = reader.GetString(6),
+                            },
+                            IdInmueble = reader.GetInt32(7),
+                            inmueble = new Inmueble
+                            {
+                                IdInmueble = reader.GetInt32(7),
+                                Direccion = reader.GetString(8),
+                                Tipo = reader.GetString(9),
+                                Uso = reader.GetString(10),
+                                Precio = reader.GetDecimal(11),
+                            }
+                        };
+                        res.Add(a);
+                    }
+                    connection.Close();
+                    //--------------------------------------------------------------
+                    foreach (Alquiler aux in res) 
+                    {
+                        fecha = Convert.ToDateTime(aux.Fecha_fin);
+                        if (fecha > hoy)
+                            rta.Add(aux);
+                    }
+                        
+                }
+            }
+            return rta;
+        }
+
+       
     }
 }

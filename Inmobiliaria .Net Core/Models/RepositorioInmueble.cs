@@ -53,7 +53,38 @@ namespace Inmobiliaria_.Net_Core.Models
             }
             return res;
         }
-
+        public int Disponer(int id)
+        {
+            int res = -1;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sql = $"UPDATE Inmueble SET Disponible=1 WHERE IdInmueble = {id}";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    connection.Open();
+                    res = command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+            return res;
+        }
+        public int NoDisponer(int id)
+        {
+            int res = -1;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sql = $"UPDATE Inmueble SET Disponible=0 WHERE IdInmueble = {id}";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    connection.Open();
+                    res = command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+            return res;
+        }
         public IList<Inmueble> BuscarPorPropietario(int idPropietario)
         {
             List<Inmueble> res = new List<Inmueble>();
@@ -62,7 +93,7 @@ namespace Inmobiliaria_.Net_Core.Models
             {
                 string sql = $"SELECT IdInmueble, Direccion, Ambientes,Tipo, Uso, Precio, Disponible, i.IdPropietario,p.Dni,p.Nombre,p.Apellido" +
                     $" FROM Inmueble i INNER JOIN Propietario p ON i.IdPropietario = p.IdPropietario" +
-                    $" WHERE IdPropietario=@idPropietario AND i.Borrado=0";
+                    $" WHERE i.IdPropietario=@idPropietario AND i.Borrado=0";
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     command.Parameters.Add("@idPropietario", SqlDbType.Int).Value = idPropietario;
@@ -188,6 +219,47 @@ namespace Inmobiliaria_.Net_Core.Models
                 string sql = $"SELECT IdInmueble, Direccion, Ambientes,Tipo, Uso, Precio, Disponible, p.IdPropietario,p.Dni,p.Nombre,p.Apellido" +
                     $" FROM Inmueble i INNER JOIN Propietario p ON i.IdPropietario = p.IdPropietario" +
                     $" WHERE i.Borrado=0";
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        inmueble = new Inmueble
+                        {
+                            IdInmueble = reader.GetInt32(0),
+                            Direccion = reader.GetString(1),
+                            Ambientes = reader.GetInt32(2),
+                            Tipo = reader.GetString(3),
+                            Uso = reader.GetString(4),
+                            Precio = reader.GetDecimal(5),
+                            Disponible = reader.GetInt32(6),
+                            IdPropietario = reader.GetInt32(7),
+                            propietario = new Propietario
+                            {
+                                IdPropietario = reader.GetInt32(7),
+                                Dni = reader.GetInt32(8),
+                                Nombre = reader.GetString(9),
+                                Apellido = reader.GetString(10),
+                            }
+                        };
+                        res.Add(inmueble);
+                    }
+                    connection.Close();
+                }
+            }
+            return res;
+        }
+        public IList<Inmueble> ObtenerDisponibles()
+        {
+            List<Inmueble> res = new List<Inmueble>();
+            Inmueble inmueble = null;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sql = $"SELECT IdInmueble, Direccion, Ambientes,Tipo, Uso, Precio, Disponible, p.IdPropietario,p.Dni,p.Nombre,p.Apellido" +
+                    $" FROM Inmueble i INNER JOIN Propietario p ON i.IdPropietario = p.IdPropietario" +
+                    $" WHERE i.Disponible=1 AND i.Borrado=0";
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     command.CommandType = CommandType.Text;

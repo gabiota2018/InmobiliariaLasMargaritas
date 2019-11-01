@@ -56,6 +56,7 @@ namespace Inmobiliaria_.Net_Core.Controllers
                 {
                     repositorio.Alta(alquiler);
                     TempData["Id"] = alquiler.IdAlquiler;
+                    repoInmueble.NoDisponer(alquiler.IdInmueble);
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -143,18 +144,46 @@ namespace Inmobiliaria_.Net_Core.Controllers
         // POST: Alquiler/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Alquiler alquiler)
         {
             try
             {
-                // TODO: Add delete logic here
-
+                repositorio.Baja(id);
+                TempData["Mensaje"] = "Alquiler Rescindido";
+                repoInmueble.Disponer(alquiler.IdInmueble);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
+                return View(alquiler);
             }
+        }
+        public ActionResult ContratosVigentes()
+        {
+            var lista = repositorio.ObtenerVigentes();
+            if (TempData.ContainsKey("Id"))
+                ViewBag.Id = TempData["Id"];
+            if (TempData.ContainsKey("Mensaje"))
+                ViewBag.Mensaje = TempData["Mensaje"];
+            ViewData["Title"] = "Alquileres Vigentes";
+            return View(lista);
+        }
+        public ActionResult ContratosPorInmueble()
+        {
+            return RedirectToAction("Index", "Inmueble");
+        }
+        public ActionResult VerContratos()
+        {
+            int IdInmueble = Convert.ToInt32(TempData["IdInmueble"]);
+            var lista = repositorio.ObtenerPorIdInmueble(IdInmueble);
+            if (TempData.ContainsKey("Id"))
+                ViewBag.Id = TempData["Id"];
+            if (TempData.ContainsKey("Mensaje"))
+                ViewBag.Mensaje = TempData["Mensaje"];
+            ViewData["Title"] = "Alquileres del Inmueble N° "+IdInmueble;
+            return View(lista);
         }
     }
 }

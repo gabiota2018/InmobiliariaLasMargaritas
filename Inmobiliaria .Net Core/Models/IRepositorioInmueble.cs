@@ -9,5 +9,8 @@ namespace Inmobiliaria_.Net_Core.Models
     {
         IList<Inmueble> BuscarPorPropietario(int idPropietario);
         decimal DevolverPrecio(int id);
+        int Disponer(int id);
+        int NoDisponer(int id);
+        IList<Inmueble> ObtenerDisponibles();
     }
 }
