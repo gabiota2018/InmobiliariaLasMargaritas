@@ -30,13 +30,13 @@ namespace Inmobiliaria_.Net_Core
 		public void ConfigureServices(IServiceCollection services)
 		{
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+                .AddCookie(options =>//el sitio valida con cookies
                 {
                     options.LoginPath = "/Home/Login";
                     options.LogoutPath = "/Home/Logout";
                     options.AccessDeniedPath = "/Home/Restringido";
                 })
-                .AddJwtBearer(options =>
+                .AddJwtBearer(options =>//la api valida con token
                 {
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
@@ -103,7 +103,12 @@ namespace Inmobiliaria_.Net_Core
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Login}/{id?}");
+                routes.MapRoute(
+                    name: "fechas",
+                    template: "{controller=Home}/{action=Fecha}/{anio}/{mes}/{dia}");
             });
         }
 	}
 }
+
+         

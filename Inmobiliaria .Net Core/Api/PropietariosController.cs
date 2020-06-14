@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Inmobiliaria_.Net_Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace Inmobiliaria_.Net_Core.Api
+namespace InmobiliariaLasMargaritas.Api
 {
+   
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PropietariosController : Controller
+    [ApiController]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class PropietariosController : ControllerBase
     {
         private readonly DataContext contexto;
         private readonly IConfiguration config;
@@ -28,7 +30,7 @@ namespace Inmobiliaria_.Net_Core.Api
             this.contexto = contexto;
             this.config = config;
         }
-        // GET: api/<controller>
+        // GET: api/<controller>--------------------------------------------------------------
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -43,7 +45,7 @@ namespace Inmobiliaria_.Net_Core.Api
             }
         }
 
-        // GET api/<controller>/5
+        // GET api/<controller>/5--------------------------------------------------------------
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -57,7 +59,7 @@ namespace Inmobiliaria_.Net_Core.Api
             }
         }
 
-        // GET api/<controller>/5
+        // GET api/<controller>/5--------------------------------------------------------------
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginView loginView)
@@ -83,7 +85,7 @@ namespace Inmobiliaria_.Net_Core.Api
                     {
                         new Claim(ClaimTypes.Name, p.Mail),
                         new Claim("FullName", p.Nombre + " " + p.Apellido),
-                        new Claim(ClaimTypes.Role, p.IdPropietario < 10? "Administrador":"Propietario"),
+                        new Claim(ClaimTypes.Role, "Propietario"),
                     };
 
                     var token = new JwtSecurityToken(
@@ -94,7 +96,7 @@ namespace Inmobiliaria_.Net_Core.Api
                         signingCredentials: credenciales
                     );
                     return Ok(new JwtSecurityTokenHandler().WriteToken(token));
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -102,7 +104,7 @@ namespace Inmobiliaria_.Net_Core.Api
             }
         }
 
-        // POST api/<controller>
+        // POST api/<controller>--------------------------------------------------------------
         [HttpPost]
         public async Task<IActionResult> Post(Propietario entidad)
         {
@@ -112,7 +114,7 @@ namespace Inmobiliaria_.Net_Core.Api
                 {
                     contexto.Propietarios.Add(entidad);
                     contexto.SaveChanges();
-                    return CreatedAtAction(nameof(Get), new { id = entidad.IdPropietario });
+                    return CreatedAtAction(nameof(Get), new { id = entidad.IdPropietario }, entidad);
                 }
                 return BadRequest();
             }
@@ -122,20 +124,20 @@ namespace Inmobiliaria_.Net_Core.Api
             }
         }
 
-        // PUT api/<controller>/5
+        // PUT api/<controller>/5--------------------------------------------------------------
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
         {
             //contexto.Propietarios.Update()
         }
 
-        // DELETE api/<controller>/5
+        // DELETE api/<controller>/5--------------------------------------------------------------
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
         }
 
-        // GET: api/<controller>
+        // GET: api/<controller>--------------------------------------------------------------
         [HttpGet("test")]
         [AllowAnonymous]
         public async Task<IActionResult> Test()

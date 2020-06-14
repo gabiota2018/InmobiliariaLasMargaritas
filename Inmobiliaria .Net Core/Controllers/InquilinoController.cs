@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Inmobiliaria_.Net_Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inmobiliaria_.Net_Core.Controllers
 {
+    [Authorize]//el controlador utiliza el sist. por defecto de autorización
     public class InquilinoController : Controller
     {
         private readonly IRepositorio<Inquilino> repositorio;

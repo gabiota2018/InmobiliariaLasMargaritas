@@ -47,22 +47,22 @@ namespace Inmobiliaria_.Net_Core.Controllers
         {
             try
             {
-                //var p = propietarios.ObtenerPorEmail(loginView.Usuario);
-                //if (p == null || p.Password != loginView.Clave)
-                //{
-                //    ViewBag.Mensaje = "Datos inválidos";
-                //    return View();
-                //}
+               /* var p = propietarios.ObtenerPorEmail(loginView.Usuario);
+                if (p == null || p.Password != loginView.Clave)
+                {
+                    ViewBag.Mensaje = "Datos inválidos";
+                    return View();
+                }*/
 
 
-                string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+              string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                       password: loginView.Clave,
                       salt: System.Text.Encoding.ASCII.GetBytes(config["Salt"]),
                       prf: KeyDerivationPrf.HMACSHA1,
                       iterationCount: 1000,
                       numBytesRequested: 256 / 8));
                 var p = propietarios.ObtenerPorEmail(loginView.Usuario);
-                if (p == null || p.Password != hashed)
+               if (p == null || p.Password != hashed)
                 {
                     ViewBag.Mensaje = "Datos inválidos";
                     return View();
