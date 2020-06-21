@@ -9,7 +9,7 @@ namespace InmobiliariaLasMargaritas.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestPropietarioController : ControllerBase
+    public class TestController : ControllerBase
     {
 
         // GET: api/<controller>

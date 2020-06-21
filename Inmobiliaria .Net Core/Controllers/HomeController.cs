@@ -18,15 +18,18 @@ namespace Inmobiliaria_.Net_Core.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IRepositorioPropietario propietarios;
+        //private readonly IRepositorioPropietario propietarios;
         private readonly IConfiguration config;
 
-        public HomeController(IRepositorioPropietario propietarios, IConfiguration config)
+        //public HomeController(IRepositorioPropietario propietarios, IConfiguration config)
+        //{
+        //    this.propietarios = propietarios;
+        //    this.config = config;
+        //}
+        public HomeController(IConfiguration config)
         {
-            this.propietarios = propietarios;
             this.config = config;
         }
-
         public IActionResult Index()
         {
             //ViewBag.Titulo = "Página de Inicio";
@@ -45,55 +48,56 @@ namespace Inmobiliaria_.Net_Core.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginView loginView)
         {
-            try
-            {
-               /* var p = propietarios.ObtenerPorEmail(loginView.Usuario);
-                if (p == null || p.Password != loginView.Clave)
-                {
-                    ViewBag.Mensaje = "Datos inválidos";
-                    return View();
-                }*/
+            //try
+            //{
+            //   /* var p = propietarios.ObtenerPorEmail(loginView.Usuario);
+            //    if (p == null || p.Password != loginView.Clave)
+            //    {
+            //        ViewBag.Mensaje = "Datos inválidos";
+            //        return View();
+            //    }*/
 
 
-              string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                      password: loginView.Clave,
-                      salt: System.Text.Encoding.ASCII.GetBytes(config["Salt"]),
-                      prf: KeyDerivationPrf.HMACSHA1,
-                      iterationCount: 1000,
-                      numBytesRequested: 256 / 8));
-                var p = propietarios.ObtenerPorEmail(loginView.Usuario);
-               if (p == null || p.Password != hashed)
-                {
-                    ViewBag.Mensaje = "Datos inválidos";
-                    return View();
-                }
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, p.Mail),
-                    new Claim("FullName", p.Nombre + " " + p.Apellido),
-                    new Claim(ClaimTypes.Role, "Administrador"),
-                };
+            //  string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            //          password: loginView.Clave,
+            //          salt: System.Text.Encoding.ASCII.GetBytes(config["Salt"]),
+            //          prf: KeyDerivationPrf.HMACSHA1,
+            //          iterationCount: 1000,
+            //          numBytesRequested: 256 / 8));
+            //    var p = propietarios.ObtenerPorEmail(loginView.Usuario);
+            //   if (p == null || p.Password != hashed)
+            //    {
+            //        ViewBag.Mensaje = "Datos inválidos";
+            //        return View();
+            //    }
+            //    var claims = new List<Claim>
+            //    {
+            //        new Claim(ClaimTypes.Name, p.Mail),
+            //        new Claim("FullName", p.Nombre + " " + p.Apellido),
+            //        new Claim(ClaimTypes.Role, "Administrador"),
+            //    };
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            //    var claimsIdentity = new ClaimsIdentity(
+            //        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var authProperties = new AuthenticationProperties
-                {
-                   AllowRefresh = true,
-                     };
+            //    var authProperties = new AuthenticationProperties
+            //    {
+            //       AllowRefresh = true,
+            //         };
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-                ViewBag.StackTrate = ex.StackTrace;
-                return View();
-            }
+            //    await HttpContext.SignInAsync(
+            //        CookieAuthenticationDefaults.AuthenticationScheme,
+            //        new ClaimsPrincipal(claimsIdentity),
+            //        authProperties);
+            //    return RedirectToAction("Index");
+            //}
+            //catch (Exception ex)
+            //{
+            //    ViewBag.Error = ex.Message;
+            //    ViewBag.StackTrate = ex.StackTrace;
+            //    return View();
+            //}
+            return View();
         }
 
         // GET: Home/Login

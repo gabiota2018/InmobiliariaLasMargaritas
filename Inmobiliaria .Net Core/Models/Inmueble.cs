@@ -9,8 +9,9 @@ namespace Inmobiliaria_.Net_Core.Models
 {
     public class Inmueble
     {
+        [Key]
         [Display(Name = "Código")]
-        public int IdInmueble { get; set; }
+        public int InmuebleId { get; set; }
         [Required]
         public String Direccion { get; set; }
         [Required]
@@ -25,7 +26,7 @@ namespace Inmobiliaria_.Net_Core.Models
         public int? Disponible { get; set; }
         public int Borrado { get; set; }
         [ForeignKey("PropietarioId")]
-        public int? IdPropietario { get; set; }
+        public int? PropietarioId { get; set; }
 
        public Propietario propietario { get; set; }
     }

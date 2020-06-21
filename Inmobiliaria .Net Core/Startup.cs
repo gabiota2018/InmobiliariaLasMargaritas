@@ -51,22 +51,23 @@ namespace Inmobiliaria_.Net_Core
                 });
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("Propietario", policy => policy.RequireClaim(ClaimTypes.Role, "Propietario"));
                 options.AddPolicy("Administrador", policy => policy.RequireClaim(ClaimTypes.Role, "Administrador"));
             });
             services.AddMvc();
-			services.AddTransient<IRepositorio<Propietario>, RepositorioPropietario>();
-            services.AddTransient<IRepositorioPropietario, RepositorioPropietario>();
+			//services.AddTransient<IRepositorio<Propietario>, RepositorioPropietario>();
+   //         services.AddTransient<IRepositorioPropietario, RepositorioPropietario>();
 
-            services.AddTransient<IRepositorio<Inquilino>, RepositorioInquilino>();
-            services.AddTransient<IRepositorioInquilino, RepositorioInquilino>();
+            //services.AddTransient<IRepositorio<Inquilino>, RepositorioInquilino>();
+            //services.AddTransient<IRepositorioInquilino, RepositorioInquilino>();
 
-            services.AddTransient<IRepositorio<Pago>, RepositorioPago>();
-            services.AddTransient<IRepositorioPago, RepositorioPago>();
+            //services.AddTransient<IRepositorio<Pago>, RepositorioPago>();
+            //services.AddTransient<IRepositorioPago, RepositorioPago>();
 
-            services.AddTransient<IRepositorio<Inmueble>, RepositorioInmueble>();
-            services.AddTransient<IRepositorioInmueble, RepositorioInmueble>();
-            services.AddTransient<IRepositorio<Alquiler>, RepositorioAlquiler>();
-            services.AddTransient<IRepositorioAlquiler, RepositorioAlquiler>();
+            //services.AddTransient<IRepositorio<Inmueble>, RepositorioInmueble>();
+            //services.AddTransient<IRepositorioInmueble, RepositorioInmueble>();
+            ////services.AddTransient<IRepositorio<Alquiler>, RepositorioAlquiler>();
+            //services.AddTransient<IRepositorioAlquiler, RepositorioAlquiler>();
             services.AddDbContext<DataContext>(options => options.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"]));
         }
 
@@ -103,9 +104,9 @@ namespace Inmobiliaria_.Net_Core
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Login}/{id?}");
-                routes.MapRoute(
-                    name: "fechas",
-                    template: "{controller=Home}/{action=Fecha}/{anio}/{mes}/{dia}");
+                //routes.MapRoute(
+                //    name: "fechas",
+                //    template: "{controller=Home}/{action=Fecha}/{anio}/{mes}/{dia}");
             });
         }
 	}

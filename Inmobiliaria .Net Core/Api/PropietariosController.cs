@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,7 +20,7 @@ namespace InmobiliariaLasMargaritas.Api
    
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PropietariosController : ControllerBase
     {
         private readonly DataContext contexto;
@@ -30,14 +31,14 @@ namespace InmobiliariaLasMargaritas.Api
             this.contexto = contexto;
             this.config = config;
         }
-        // GET: api/<controller>--------------------------------------------------------------
+
+        // GET: api/DuenioEvento
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             try
             {
-                var usuario = User.Identity.Name;
-                return Ok(contexto.Propietarios.SingleOrDefault(x => x.Mail == usuario));
+                return Ok(contexto.Propietario.SingleOrDefault(x => x.Mail == User.Identity.Name));
             }
             catch (Exception ex)
             {
@@ -45,13 +46,13 @@ namespace InmobiliariaLasMargaritas.Api
             }
         }
 
-        // GET api/<controller>/5--------------------------------------------------------------
+        // GET: api/DuenioEvento/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             try
             {
-                return Ok(contexto.Propietarios.SingleOrDefault(x => x.IdPropietario == id));
+                return Ok(contexto.Propietario.SingleOrDefault(x => x.PropietarioId == id));
             }
             catch (Exception ex)
             {
@@ -59,21 +60,106 @@ namespace InmobiliariaLasMargaritas.Api
             }
         }
 
-        // GET api/<controller>/5--------------------------------------------------------------
+        // POST: api/DuenioEvento
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Post(Propietario entidad)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    entidad.Clave = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                                                password: entidad.Clave,
+                                                salt: System.Text.Encoding.ASCII.GetBytes("SALADA"),
+                                                prf: KeyDerivationPrf.HMACSHA1,
+                                                iterationCount: 1000,
+                                                numBytesRequested: 256 / 8));
+                    contexto.Propietario.Add(entidad);
+                    contexto.SaveChanges();
+                    return CreatedAtAction(nameof(Get), new { id = entidad.PropietarioId }, entidad);
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        // PUT: api/DuenioEvento/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, Propietario entidad)
+        {
+            try
+            {
+                //edita solo el propie logeado
+                if (ModelState.IsValid && contexto.Propietario.AsNoTracking().SingleOrDefault(e => e.PropietarioId == id && e.Mail == User.Identity.Name) != null)
+                {
+                    entidad.PropietarioId = id;
+                    entidad.Clave = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                                                password: entidad.Clave,
+                                                salt: System.Text.Encoding.ASCII.GetBytes("SALADA"),
+                                                prf: KeyDerivationPrf.HMACSHA1,
+                                                iterationCount: 1000,
+                                                numBytesRequested: 256 / 8));
+                    contexto.Propietario.Update(entidad);
+                    contexto.SaveChanges();
+                    return Ok(entidad);
+                }
+                //return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+            try
+            {
+                return Ok("anduvo");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        // DELETE: api/ApiWithActions/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                //Borra solo el DuenioEvento logeado
+                var entidad = contexto.Propietario.FirstOrDefault(e => e.PropietarioId == id && e.Mail == User.Identity.Name);
+                if (entidad != null)
+                {
+                    entidad.Borrado = 0;
+                    contexto.Propietario.Update(entidad);
+                    contexto.SaveChanges();
+                    return Ok();
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginView loginView)
+        public async Task<IActionResult> Login(Propietario entidad)
         {
             try
             {
                 string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                    password: loginView.Clave,
+                    password: entidad.Clave,
                     salt: System.Text.Encoding.ASCII.GetBytes(config["Salt"]),
                     prf: KeyDerivationPrf.HMACSHA1,
                     iterationCount: 1000,
                     numBytesRequested: 256 / 8));
-                var p = contexto.Propietarios.FirstOrDefault(x => x.Mail == loginView.Usuario);
-                if (p == null || p.Password != hashed)
+                var p = contexto.Propietario.FirstOrDefault(x => x.Mail == entidad.Mail);
+                if (p == null || p.Clave != hashed)
                 {
                     return BadRequest("Nombre de usuario o clave incorrecta");
                 }
@@ -103,43 +189,6 @@ namespace InmobiliariaLasMargaritas.Api
                 return BadRequest(ex);
             }
         }
-
-        // POST api/<controller>--------------------------------------------------------------
-        [HttpPost]
-        public async Task<IActionResult> Post(Propietario entidad)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    contexto.Propietarios.Add(entidad);
-                    contexto.SaveChanges();
-                    return CreatedAtAction(nameof(Get), new { id = entidad.IdPropietario }, entidad);
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-
-        // PUT api/<controller>/5--------------------------------------------------------------
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-            //contexto.Propietarios.Update()
-        }
-
-        // DELETE api/<controller>/5--------------------------------------------------------------
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
-
-        // GET: api/<controller>--------------------------------------------------------------
-        [HttpGet("test")]
-        [AllowAnonymous]
         public async Task<IActionResult> Test()
         {
             try

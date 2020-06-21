@@ -10,7 +10,7 @@ namespace Inmobiliaria_.Net_Core.Models
     {
         [Key]
         [Display(Name = "Código")]
-        public int IdPropietario { get; set; }
+        public int PropietarioId { get; set; }
        
         [Required]
         public int? Dni { get; set; }
@@ -24,7 +24,7 @@ namespace Inmobiliaria_.Net_Core.Models
         [Display(Name = "Email")]
         public String Mail { get; set; }
         [Required, DataType(DataType.Password)]
-        public String Password { get; set; }
+        public String Clave { get; set; }
         public int Borrado { get; set; }
     }
 }
