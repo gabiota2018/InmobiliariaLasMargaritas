@@ -124,7 +124,7 @@ namespace InmobiliariaLasMargaritas.Api
         {
             try
             {
-                var entidad = contexto.Inmuebles.Include(e => e.propietario).FirstOrDefault(e => e.IdInmueble == id && e.propietario.Mail == User.Identity.Name);
+                var entidad = contexto.Inmuebles.Include(e => e.propietario).FirstOrDefault(e => e.InmuebleId == id && e.propietario.Mail == User.Identity.Name);
                 if (entidad != null)
                 {
                     entidad.Borrado = 1;//cambiar por estado = 0

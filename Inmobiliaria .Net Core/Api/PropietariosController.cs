@@ -32,7 +32,7 @@ namespace InmobiliariaLasMargaritas.Api
             this.config = config;
         }
 
-        // GET: api/DuenioEvento
+        // GET: api/<controller>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -46,7 +46,7 @@ namespace InmobiliariaLasMargaritas.Api
             }
         }
 
-        // GET: api/DuenioEvento/5
+        // GET: api/<controller>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -60,7 +60,7 @@ namespace InmobiliariaLasMargaritas.Api
             }
         }
 
-        // POST: api/DuenioEvento
+        // POST: api/<controller>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Post(Propietario entidad)
@@ -87,9 +87,9 @@ namespace InmobiliariaLasMargaritas.Api
             }
         }
 
-        // PUT: api/DuenioEvento/5
+        // PUT: api/<controller>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Propietario entidad)
+        public IActionResult Put(int id, Propietario entidad)
         {
             try
             {
@@ -113,17 +113,10 @@ namespace InmobiliariaLasMargaritas.Api
             {
                 return BadRequest(ex);
             }
-            try
-            {
-                return Ok("anduvo");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+
         }
 
-        // DELETE: api/ApiWithActions/5
+        // DELETE api/<controller>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
