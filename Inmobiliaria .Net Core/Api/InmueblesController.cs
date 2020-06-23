@@ -24,15 +24,14 @@ namespace InmobiliariaLasMargaritas.Api
             this.contexto = contexto;
         }
 
-        //GET: api/<controller>
+        // GET: api/<controller>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             try
             {
                 var usuario = User.Identity.Name;
-                var lista = contexto.Inmuebles.Include(e => e.propietario).ToList();
-                return Ok(lista);
+                return Ok(contexto.Inmueble.Include(e => e.Propietario).Where(e => e.Propietario.Mail == usuario));
             }
             catch (Exception ex)
             {
@@ -47,7 +46,7 @@ namespace InmobiliariaLasMargaritas.Api
             try
             {
                 var usuario = User.Identity.Name;
-                return Ok(contexto.Inmuebles.Include(e => e.propietario).Where(e => e.propietario.Mail == usuario).Single(e => e.InmuebleId == id));
+                return Ok(contexto.Inmueble.Include(e => e.Propietario).Where(e => e.Propietario.Mail == usuario).Single(e => e.InmuebleId == id));
             }
             catch (Exception ex)
             {
@@ -64,7 +63,8 @@ namespace InmobiliariaLasMargaritas.Api
                 if (ModelState.IsValid)
                 {
                     entidad.PropietarioId = contexto.Propietario.Single(e => e.Mail == User.Identity.Name).PropietarioId;
-                    contexto.Inmuebles.Add(entidad);
+                    // entidad.Propietario = null;
+                    contexto.Inmueble.Add(entidad);
                     contexto.SaveChanges();
                     return CreatedAtAction(nameof(Get), new { id = entidad.InmuebleId }, entidad);
                 }
@@ -82,10 +82,10 @@ namespace InmobiliariaLasMargaritas.Api
         {
             try
             {
-                if (ModelState.IsValid && contexto.Inmuebles.AsNoTracking().Include(e => e.propietario).FirstOrDefault(e => e.InmuebleId == id && e.propietario.Mail == User.Identity.Name) != null)
+                if (ModelState.IsValid && contexto.Inmueble.AsNoTracking().Include(e => e.Propietario).FirstOrDefault(e => e.InmuebleId == id && e.Propietario.Mail == User.Identity.Name) != null)
                 {
                     entidad.InmuebleId = id;
-                    contexto.Inmuebles.Update(entidad);
+                    contexto.Inmueble.Update(entidad);
                     contexto.SaveChanges();
                     return Ok(entidad);
                 }
@@ -103,10 +103,10 @@ namespace InmobiliariaLasMargaritas.Api
         {
             try
             {
-                var entidad = contexto.Inmuebles.Include(e => e.propietario).FirstOrDefault(e => e.InmuebleId == id && e.propietario.Mail == User.Identity.Name);
+                var entidad = contexto.Inmueble.Include(e => e.Propietario).FirstOrDefault(e => e.InmuebleId == id && e.Propietario.Mail == User.Identity.Name);
                 if (entidad != null)
                 {
-                    contexto.Inmuebles.Remove(entidad);
+                    contexto.Inmueble.Remove(entidad);
                     contexto.SaveChanges();
                     return Ok();
                 }
@@ -118,27 +118,6 @@ namespace InmobiliariaLasMargaritas.Api
             }
         }
 
-        // DELETE api/<controller>/5
-        [HttpDelete("BajaLogica/{id}")]
-        public async Task<IActionResult> BajaLogica(int id)
-        {
-            try
-            {
-                var entidad = contexto.Inmuebles.Include(e => e.propietario).FirstOrDefault(e => e.InmuebleId == id && e.propietario.Mail == User.Identity.Name);
-                if (entidad != null)
-                {
-                    entidad.Borrado = 1;//cambiar por estado = 0
-                    contexto.Inmuebles.Update(entidad);
-                    contexto.SaveChanges();
-                    return Ok();
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
     }
-} 
+}
 

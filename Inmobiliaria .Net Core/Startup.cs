@@ -25,8 +25,6 @@ namespace Inmobiliaria_.Net_Core
             this.configuration = configuration;
         }
 
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -55,20 +53,7 @@ namespace Inmobiliaria_.Net_Core
                 options.AddPolicy("Administrador", policy => policy.RequireClaim(ClaimTypes.Role, "Administrador"));
             });
             services.AddMvc();
-			//services.AddTransient<IRepositorio<Propietario>, RepositorioPropietario>();
-   //         services.AddTransient<IRepositorioPropietario, RepositorioPropietario>();
-
-            //services.AddTransient<IRepositorio<Inquilino>, RepositorioInquilino>();
-            //services.AddTransient<IRepositorioInquilino, RepositorioInquilino>();
-
-            //services.AddTransient<IRepositorio<Pago>, RepositorioPago>();
-            //services.AddTransient<IRepositorioPago, RepositorioPago>();
-
-            //services.AddTransient<IRepositorio<Inmueble>, RepositorioInmueble>();
-            //services.AddTransient<IRepositorioInmueble, RepositorioInmueble>();
-            ////services.AddTransient<IRepositorio<Alquiler>, RepositorioAlquiler>();
-            //services.AddTransient<IRepositorioAlquiler, RepositorioAlquiler>();
-            services.AddDbContext<DataContext>(options => options.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"]));
+			services.AddDbContext<DataContext>(options => options.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,10 +89,7 @@ namespace Inmobiliaria_.Net_Core
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Login}/{id?}");
-                //routes.MapRoute(
-                //    name: "fechas",
-                //    template: "{controller=Home}/{action=Fecha}/{anio}/{mes}/{dia}");
-            });
+          });
         }
 	}
 }

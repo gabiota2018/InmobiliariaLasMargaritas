@@ -28,6 +28,6 @@ namespace Inmobiliaria_.Net_Core.Models
         [ForeignKey("PropietarioId")]
         public int? PropietarioId { get; set; }
 
-       public Propietario propietario { get; set; }
+       public Propietario Propietario { get; set; }
     }
 }

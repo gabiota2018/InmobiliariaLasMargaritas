@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Inmobiliaria_.Net_Core.Models;
@@ -17,11 +16,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace InmobiliariaLasMargaritas.Api
 {
-   
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PropietariosController : ControllerBase
+    public class PropietariosController : Controller
     {
         private readonly DataContext contexto;
         private readonly IConfiguration config;
@@ -31,14 +29,14 @@ namespace InmobiliariaLasMargaritas.Api
             this.contexto = contexto;
             this.config = config;
         }
-
         // GET: api/<controller>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             try
             {
-                return Ok(contexto.Propietario.SingleOrDefault(x => x.Mail == User.Identity.Name));
+                var usuario = User.Identity.Name;
+                return Ok(contexto.Propietario.SingleOrDefault(x => x.Mail == usuario));
             }
             catch (Exception ex)
             {
@@ -46,7 +44,7 @@ namespace InmobiliariaLasMargaritas.Api
             }
         }
 
-        // GET: api/<controller>/5
+        // GET api/<controller>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -60,98 +58,20 @@ namespace InmobiliariaLasMargaritas.Api
             }
         }
 
-        // POST: api/<controller>
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> Post(Propietario entidad)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    entidad.Clave = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                                                password: entidad.Clave,
-                                                salt: System.Text.Encoding.ASCII.GetBytes("SALADA"),
-                                                prf: KeyDerivationPrf.HMACSHA1,
-                                                iterationCount: 1000,
-                                                numBytesRequested: 256 / 8));
-                    contexto.Propietario.Add(entidad);
-                    contexto.SaveChanges();
-                    return CreatedAtAction(nameof(Get), new { id = entidad.PropietarioId }, entidad);
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-
-        // PUT: api/<controller>/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Propietario entidad)
-        {
-            try
-            {
-                //edita solo el propie logeado
-                if (ModelState.IsValid && contexto.Propietario.AsNoTracking().SingleOrDefault(e => e.PropietarioId == id && e.Mail == User.Identity.Name) != null)
-                {
-                    entidad.PropietarioId = id;
-                    entidad.Clave = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                                                password: entidad.Clave,
-                                                salt: System.Text.Encoding.ASCII.GetBytes("SALADA"),
-                                                prf: KeyDerivationPrf.HMACSHA1,
-                                                iterationCount: 1000,
-                                                numBytesRequested: 256 / 8));
-                    contexto.Propietario.Update(entidad);
-                    contexto.SaveChanges();
-                    return Ok(entidad);
-                }
-                //return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-
-        }
-
-        // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                //Borra solo el DuenioEvento logeado
-                var entidad = contexto.Propietario.FirstOrDefault(e => e.PropietarioId == id && e.Mail == User.Identity.Name);
-                if (entidad != null)
-                {
-                    entidad.Borrado = 0;
-                    contexto.Propietario.Update(entidad);
-                    contexto.SaveChanges();
-                    return Ok();
-                }
-                return BadRequest();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-
+        // GET api/<controller>/5
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(Propietario entidad)
+        public async Task<IActionResult> Login(LoginView loginView)
         {
             try
             {
                 string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                    password: entidad.Clave,
+                    password: loginView.Clave,
                     salt: System.Text.Encoding.ASCII.GetBytes(config["Salt"]),
                     prf: KeyDerivationPrf.HMACSHA1,
                     iterationCount: 1000,
                     numBytesRequested: 256 / 8));
-                var p = contexto.Propietario.FirstOrDefault(x => x.Mail == entidad.Mail);
+                var p = contexto.Propietario.FirstOrDefault(x => x.Mail == loginView.Usuario);
                 if (p == null || p.Clave != hashed)
                 {
                     return BadRequest("Nombre de usuario o clave incorrecta");
@@ -181,17 +101,54 @@ namespace InmobiliariaLasMargaritas.Api
             {
                 return BadRequest(ex);
             }
+
         }
-        public async Task<IActionResult> Test()
+
+        // POST api/<controller>
+        [HttpPost]
+        public async Task<IActionResult> Post(Propietario entidad)
         {
             try
             {
-                return Ok("anduvo");
+                if (ModelState.IsValid)
+                {
+                    contexto.Propietario.Add(entidad);
+                    contexto.SaveChanges();
+                    return CreatedAtAction(nameof(Get), new { id = entidad.PropietarioId }, entidad);
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
             }
         }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Put(Propietario entidad)
+        {
+            //contexto.Propietarios.Update()
+            try
+            {
+                if (ModelState.IsValid && contexto.Propietario.AsNoTracking().SingleOrDefault(e => e.PropietarioId == entidad.PropietarioId && e.Mail == User.Identity.Name) != null)
+                {
+                    entidad.Clave = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                                                password: entidad.Clave,
+                                                salt: System.Text.Encoding.ASCII.GetBytes("SALADA"),
+                                                prf: KeyDerivationPrf.HMACSHA1,
+                                                iterationCount: 1000,
+                                                numBytesRequested: 256 / 8));
+                    contexto.Propietario.Update(entidad);
+                    contexto.SaveChanges();
+                    return Ok(entidad);
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
     }
-}
